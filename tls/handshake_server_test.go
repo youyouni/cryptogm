@@ -10,7 +10,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rsa"
-	"github.com/Hyperledger-TWGC/cryptogm/x509"
+	"github.com/cetcxinlian/crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
 	"errors"
