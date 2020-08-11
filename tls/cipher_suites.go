@@ -16,7 +16,7 @@ import (
 
 	"github.com/youyouni/cryptogm/x509"
 
-	"github.com/youyouni/cryptogm/internal/golang_org/x/crypto/chacha20poly1305"
+	"github.com/youyouni/x/golang_org/x/crypto/chacha20poly1305"
 )
 
 // a keyAgreement implements the client and server side of a TLS key agreement

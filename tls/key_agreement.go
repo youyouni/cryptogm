@@ -16,7 +16,7 @@ import (
 
 	"github.com/youyouni/cryptogm/x509"
 
-	"github.com/youyouni/cryptogm/internal/golang_org/x/crypto/curve25519"
+	"github.com/youyouni/x/golang_org/x/crypto/curve25519"
 )
 
 var errClientKeyExchange = errors.New("tls: invalid ClientKeyExchange message")
