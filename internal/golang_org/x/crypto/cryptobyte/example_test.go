@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 
-	"golang_org/x/crypto/cryptobyte"
-	"golang_org/x/crypto/cryptobyte/asn1"
+	"github.com/youyouni/cryptogm/internal/golang_org/x/crypto/cryptobyte"
+	"github.com/youyouni/cryptogm/internal/golang_org/x/crypto/cryptobyte/asn1"
 )
 
 func ExampleString_lengthPrefixed() {

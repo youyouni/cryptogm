@@ -12,10 +12,11 @@ import (
 	"crypto/rc4"
 	"crypto/sha1"
 	"crypto/sha256"
-	"github.com/cetcxinlian/cryptogm/x509"
 	"hash"
 
-	"golang_org/x/crypto/chacha20poly1305"
+	"github.com/cetcxinlian/cryptogm/x509"
+
+	"github.com/youyouni/cryptogm/internal/golang_org/x/crypto/chacha20poly1305"
 )
 
 // a keyAgreement implements the client and server side of a TLS key agreement
