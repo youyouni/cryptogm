@@ -14,7 +14,7 @@ import (
 	"crypto/sha256"
 	"hash"
 
-	"github.com/cetcxinlian/cryptogm/x509"
+	"github.com/youyouni/cryptogm/x509"
 
 	"github.com/youyouni/cryptogm/internal/golang_org/x/crypto/chacha20poly1305"
 )

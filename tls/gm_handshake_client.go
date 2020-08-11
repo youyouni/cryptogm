@@ -7,17 +7,19 @@ package tls
 import (
 	"bytes"
 	"crypto"
+
 	// add by syl
 	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/subtle"
 	"errors"
 	"fmt"
-	"github.com/cetcxinlian/cryptogm/sm2"
-	"github.com/cetcxinlian/cryptogm/x509"
 	"io"
 	"strconv"
 	"sync/atomic"
+
+	"github.com/youyouni/cryptogm/sm2"
+	"github.com/youyouni/cryptogm/x509"
 )
 
 type clientHandshakeStateGM struct {
@@ -36,9 +38,9 @@ func makeClientHelloGM(config *Config) (*clientHelloMsg, error) {
 	}
 
 	hello := &clientHelloMsg{
-		vers:                         config.GMSupport.GetVersion(),
-		compressionMethods:           []uint8{compressionNone},
-		random:                       make([]byte, 32),
+		vers:               config.GMSupport.GetVersion(),
+		compressionMethods: []uint8{compressionNone},
+		random:             make([]byte, 32),
 	}
 	possibleCipherSuites := getCipherSuites(config)
 	hello.cipherSuites = make([]uint16, 0, len(possibleCipherSuites))
@@ -83,7 +85,7 @@ func (hs *clientHandshakeStateGM) handshake() error {
 		return unexpectedMessageError(hs.serverHello, msg)
 	}
 
-	if hs.serverHello.vers != VersionGMSSL{
+	if hs.serverHello.vers != VersionGMSSL {
 		hs.c.sendAlert(alertProtocolVersion)
 		return fmt.Errorf("tls: server selected unsupported protocol version %x, while expecting %x", hs.serverHello.vers, VersionGMSSL)
 	}
@@ -238,7 +240,7 @@ func (hs *clientHandshakeStateGM) doFullHandshake() error {
 				opts.Roots = x509.NewCertPool()
 			}
 
-			for _,rootca := range getCAs() {
+			for _, rootca := range getCAs() {
 				opts.Roots.AddCert(rootca)
 			}
 			for i, cert := range certs {
@@ -290,7 +292,7 @@ func (hs *clientHandshakeStateGM) doFullHandshake() error {
 	}
 
 	keyAgreement := hs.suite.ka(c.vers)
-	if ka,ok := keyAgreement.(*eccKeyAgreementGM); ok{
+	if ka, ok := keyAgreement.(*eccKeyAgreementGM); ok {
 		// mod by syl only one cert
 		//ka.encipherCert = c.peerCertificates[1]
 		ka.encipherCert = c.peerCertificates[0]
@@ -662,4 +664,3 @@ findCert:
 	// No acceptable certificate found. Don't send a certificate.
 	return new(Certificate), nil
 }
-

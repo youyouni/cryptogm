@@ -11,24 +11,25 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"github.com/cetcxinlian/cryptogm/sm2"
-	"github.com/cetcxinlian/cryptogm/sm3"
-	"github.com/cetcxinlian/cryptogm/sm4"
-	"github.com/cetcxinlian/cryptogm/x509"
 	"io/ioutil"
 	"strings"
 	"sync"
+
+	"github.com/youyouni/cryptogm/sm2"
+	"github.com/youyouni/cryptogm/sm3"
+	"github.com/youyouni/cryptogm/sm4"
+	"github.com/youyouni/cryptogm/x509"
 )
 
 const VersionGMSSL = 0x0101 // GM/T 0024-2014
 
-var pemCAs = []struct{
+var pemCAs = []struct {
 	name string
 	pem  string
 }{
 	{
-		name:"CFCA",
-		pem:`-----BEGIN CERTIFICATE-----
+		name: "CFCA",
+		pem: `-----BEGIN CERTIFICATE-----
 MIICezCCAh6gAwIBAgIQJRABs1dlPn+86pb7bT74wjAMBggqgRzPVQGDdQUAMFgx
 CzAJBgNVBAYTAkNOMTAwLgYDVQQKDCdDaGluYSBGaW5hbmNpYWwgQ2VydGlmaWNh
 dGlvbiBBdXRob3JpdHkxFzAVBgNVBAMMDkNGQ0EgQ1MgU00yIENBMB4XDTE1MDcx
@@ -46,8 +47,8 @@ lEDJGbdoQKfMyMIrwkuRjxV4fXu+CQZIsYGFnQIhAKFs1nR4OHFxsdjHPXG0CBx+
 -----END CERTIFICATE-----`,
 	},
 	{
-		name:"TEST",
-		pem:`-----BEGIN CERTIFICATE-----
+		name: "TEST",
+		pem: `-----BEGIN CERTIFICATE-----
 MIIBgTCCASegAwIBAgIRAJa6ZDaSc3wau4+2sLM2zhMwCgYIKoEcz1UBg3UwJTEL
 MAkGA1UEBhMCQ04xFjAUBgNVBAoTDWNhLmNldGNzYy5jb20wHhcNMTgxMjI0MDk1
 NDMyWhcNMzgxMjE5MDk1NDMyWjAlMQswCQYDVQQGEwJDTjEWMBQGA1UEChMNY2Eu
@@ -60,8 +61,8 @@ vHTeE7Y=
 -----END CERTIFICATE-----`,
 	},
 	{
-		name:"FABRIC",
-		pem:`-----BEGIN CERTIFICATE-----
+		name: "FABRIC",
+		pem: `-----BEGIN CERTIFICATE-----
 MIICMDCCAdagAwIBAgIRANnwbA2SIB/k0VNSkTi7TYUwCgYIKoEcz1UBg3UwaTEL
 MAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG
 cmFuY2lzY28xFDASBgNVBAoTC2V4YW1wbGUuY29tMRcwFQYDVQQDEw5jYS5leGFt
@@ -81,11 +82,12 @@ AwIhAPKX+rTHK3IHmZ3MHU2ajoJcGwq0h7aWpcpljF6cld4r
 var certCAs []*x509.Certificate
 
 var initonce sync.Once
+
 func getCAs() []*x509.Certificate {
-	initonce.Do(func(){
-		for _,pemca := range pemCAs  {
-			block,_ := pem.Decode([]byte(pemca.pem))
-			  ca, err := x509.ParseCertificate(block.Bytes)
+	initonce.Do(func() {
+		for _, pemca := range pemCAs {
+			block, _ := pem.Decode([]byte(pemca.pem))
+			ca, err := x509.ParseCertificate(block.Bytes)
 			if err != nil {
 				panic(err)
 			}
@@ -95,34 +97,33 @@ func getCAs() []*x509.Certificate {
 	return certCAs
 }
 
-
 // A list of cipher suite IDs that are, or have been, implemented by this
 // package.
-const(
+const (
 	//GM crypto suites ID  Taken from GM/T 0024-2014
-	GMTLS_ECDHE_SM2_WITH_SM1_SM3            uint16 = 0xe001
-	GMTLS_SM2_WITH_SM1_SM3                  uint16 = 0xe003
-	GMTLS_IBSDH_WITH_SM1_SM3                uint16 = 0xe005
-	GMTLS_IBC_WITH_SM1_SM3                  uint16 = 0xe007
-	GMTLS_RSA_WITH_SM1_SM3                  uint16 = 0xe009
-	GMTLS_RSA_WITH_SM1_SHA1                 uint16 = 0xe00a
-	GMTLS_ECDHE_SM2_WITH_SM4_SM3            uint16 = 0xe011
-	GMTLS_SM2_WITH_SM4_SM3                  uint16 = 0xe013
-	GMTLS_IBSDH_WITH_SM4_SM3                uint16 = 0xe015
-	GMTLS_IBC_WITH_SM4_SM3                  uint16 = 0xe017
-	GMTLS_RSA_WITH_SM4_SM3                  uint16 = 0xe019
-	GMTLS_RSA_WITH_SM4_SHA1                 uint16 = 0xe01a
+	GMTLS_ECDHE_SM2_WITH_SM1_SM3 uint16 = 0xe001
+	GMTLS_SM2_WITH_SM1_SM3       uint16 = 0xe003
+	GMTLS_IBSDH_WITH_SM1_SM3     uint16 = 0xe005
+	GMTLS_IBC_WITH_SM1_SM3       uint16 = 0xe007
+	GMTLS_RSA_WITH_SM1_SM3       uint16 = 0xe009
+	GMTLS_RSA_WITH_SM1_SHA1      uint16 = 0xe00a
+	GMTLS_ECDHE_SM2_WITH_SM4_SM3 uint16 = 0xe011
+	GMTLS_SM2_WITH_SM4_SM3       uint16 = 0xe013
+	GMTLS_IBSDH_WITH_SM4_SM3     uint16 = 0xe015
+	GMTLS_IBC_WITH_SM4_SM3       uint16 = 0xe017
+	GMTLS_RSA_WITH_SM4_SM3       uint16 = 0xe019
+	GMTLS_RSA_WITH_SM4_SHA1      uint16 = 0xe01a
 )
 
 var gmCipherSuites = []*cipherSuite{
-	{GMTLS_SM2_WITH_SM4_SM3, 16, 32, 16, eccGMKA,  suiteECDSA, cipherSM4, macSM3, nil},
+	{GMTLS_SM2_WITH_SM4_SM3, 16, 32, 16, eccGMKA, suiteECDSA, cipherSM4, macSM3, nil},
 	{GMTLS_ECDHE_SM2_WITH_SM4_SM3, 16, 32, 16, ecdheGMKA, suiteECDHE | suiteECDSA, cipherSM4, macSM3, nil},
 }
 
-func getCipherSuites(c *Config) []uint16{
+func getCipherSuites(c *Config) []uint16 {
 	s := c.CipherSuites
-	if s == nil{
-		s = []uint16{GMTLS_SM2_WITH_SM4_SM3,GMTLS_ECDHE_SM2_WITH_SM4_SM3}
+	if s == nil {
+		s = []uint16{GMTLS_SM2_WITH_SM4_SM3, GMTLS_ECDHE_SM2_WITH_SM4_SM3}
 	}
 	return s
 }
@@ -144,7 +145,7 @@ func macSM3(version uint16, key []byte) macFunction {
 type nilMD5Hash struct{}
 
 func (nilMD5Hash) Write(p []byte) (n int, err error) {
-	return 0,nil
+	return 0, nil
 }
 
 func (nilMD5Hash) Sum(b []byte) []byte {
@@ -195,18 +196,18 @@ func mutualCipherSuiteGM(have []uint16, want uint16) *cipherSuite {
 	return nil
 }
 
-type GMSupport struct{
+type GMSupport struct {
 }
 
-func(support *GMSupport) GetVersion() uint16{
+func (support *GMSupport) GetVersion() uint16 {
 	return VersionGMSSL
 }
 
-func(support *GMSupport) IsAvailable() bool{
+func (support *GMSupport) IsAvailable() bool {
 	return true
 }
 
-func(support *GMSupport)cipherSuites() []*cipherSuite{
+func (support *GMSupport) cipherSuites() []*cipherSuite {
 	return gmCipherSuites
 }
 
@@ -323,7 +324,7 @@ func getKey(keyPEMBlock []byte) (*pem.Block, error) {
 	return keyDERBlock, nil
 }
 
-func matchKeyCert(keyDERBlock *pem.Block, certDERBlock[]byte) (crypto.PrivateKey, error) {
+func matchKeyCert(keyDERBlock *pem.Block, certDERBlock []byte) (crypto.PrivateKey, error) {
 	// We don't need to parse the public key for TLS, but we so do anyway
 	// to check that it looks sane and matches the private key.
 	x509Cert, err := x509.ParseCertificate(certDERBlock)
@@ -359,25 +360,25 @@ func GMX509KeyPairs(certPEMBlock, keyPEMBlock, encCertPEMBlock, encKeyPEMBlock [
 
 	var certificate Certificate
 
-	signCerts,err := getCert(certPEMBlock)
+	signCerts, err := getCert(certPEMBlock)
 	if err != nil {
 		return certificate, err
 	}
-	if len(signCerts) == 0{
+	if len(signCerts) == 0 {
 		return certificate, errors.New("tls: failed to find any sign cert PEM data in cert input")
 	}
 	certificate.Certificate = append(certificate.Certificate, signCerts[0])
 
-	encCerts,err := getCert(encCertPEMBlock)
+	encCerts, err := getCert(encCertPEMBlock)
 	if err != nil {
 		return certificate, err
 	}
-	if len(encCerts) == 0{
+	if len(encCerts) == 0 {
 		return certificate, errors.New("tls: failed to find any enc cert PEM data in cert input")
 	}
 	certificate.Certificate = append(certificate.Certificate, encCerts[0])
 
-	keyDERBlock,err := getKey(keyPEMBlock)
+	keyDERBlock, err := getKey(keyPEMBlock)
 	if err != nil {
 		return certificate, err
 	}
@@ -386,8 +387,6 @@ func GMX509KeyPairs(certPEMBlock, keyPEMBlock, encCertPEMBlock, encKeyPEMBlock [
 	if err != nil {
 		return fail(err)
 	}
-
-
 
 	return certificate, nil
 }
@@ -398,14 +397,14 @@ func GMX509KeyPairsSingle(certPEMBlock, keyPEMBlock []byte) (Certificate, error)
 
 	var certificate Certificate
 
-	certs,err := getCert(certPEMBlock)
+	certs, err := getCert(certPEMBlock)
 	if err != nil {
 		return certificate, err
 	}
-	if len(certs) == 0{
+	if len(certs) == 0 {
 		return certificate, errors.New("tls: failed to find any sign cert PEM data in cert input")
 	}
-	checkCert,err := x509.ParseCertificate(certs[0])
+	checkCert, err := x509.ParseCertificate(certs[0])
 	if err != nil {
 		return certificate, errors.New("tls: failed to parse certificate")
 	}
@@ -417,8 +416,7 @@ func GMX509KeyPairsSingle(certPEMBlock, keyPEMBlock []byte) (Certificate, error)
 
 	certificate.Certificate = append(certificate.Certificate, certs[0]) //this is for sign and env
 
-
-	keyDERBlock,err := getKey(keyPEMBlock)
+	keyDERBlock, err := getKey(keyPEMBlock)
 	if err != nil {
 		return certificate, err
 	}

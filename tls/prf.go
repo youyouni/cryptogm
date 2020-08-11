@@ -13,8 +13,9 @@ import (
 	"crypto/sha512"
 	"errors"
 	"fmt"
-	"github.com/cetcxinlian/cryptogm/sm3"
 	"hash"
+
+	"github.com/youyouni/cryptogm/sm3"
 )
 
 // Split a premaster secret in two as specified in RFC 4346, section 5.
@@ -244,7 +245,7 @@ func (h *finishedHash) Write(msg []byte) (n int, err error) {
 }
 
 func (h finishedHash) Sum() []byte {
-	if h.version >= VersionTLS12 || h.version == VersionGMSSL{
+	if h.version >= VersionTLS12 || h.version == VersionGMSSL {
 		return h.client.Sum(nil)
 	}
 
